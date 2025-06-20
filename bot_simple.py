@@ -44,7 +44,7 @@ async def enter_reps(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if context.user_data["current"] >= len(context.user_data["exercises"]):
         save_report(update.effective_user.id, context.user_data)
-        msg = "✅ Отчёт сохранён:
+        msg = "✅ Отчёт сохранён:\n" + "\n".join(context.user_data["results"])
 " + "\n".join(context.user_data["results"])
         await update.message.reply_text(msg)
         return ConversationHandler.END
