@@ -2,7 +2,10 @@ import json
 import os
 from datetime import datetime
 from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
+from telegram.ext import (
+    ApplicationBuilder, CommandHandler, MessageHandler,
+    filters, ContextTypes, ConversationHandler
+)
 
 CHOOSING_DAY, ENTER_SETS, ENTER_REPS = range(3)
 
@@ -17,7 +20,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def workout(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_keyboard = [["A", "B", "C"]]
-    await update.message.reply_text("Какой тип дня? (A, B или C)", reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
+    await update.message.reply_text(
+        "Какой тип дня? (A, B или C)",
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    )
     return CHOOSING_DAY
 
 async def choose_day(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -43,8 +49,7 @@ async def enter_reps(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if context.user_data["current"] >= len(context.user_data["exercises"]):
         save_report(update.effective_user.id, context.user_data)
-        msg = "✅ Отчёт сохранён:
-" + "\n".join(context.user_data["results"])
+        msg = "✅ Отчёт сохранён:\n" + "\n".join(context.user_data["results"])
         await update.message.reply_text(msg)
         return ConversationHandler.END
 
@@ -81,9 +86,7 @@ async def show_progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not user_data:
         await update.message.reply_text("Ты ещё не тренировался 😅")
         return
-    msg = "📊 Последние тренировки:
-
-"
+    msg = "📊 Последние тренировки:\n\n"
     for d in user_data[-3:]:
         msg += f"{d['date']} [{d['day']}]:\n" + "\n".join(d["results"]) + "\n\n"
     await update.message.reply_text(msg)
@@ -93,8 +96,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 def main():
-    import os
-    TOKEN = os.getenv("BOT_TOKEN")
+    TOKEN = os.getenv("BOT_TOKEN")  # Токен из Render переменной окружения
     app = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
