@@ -16,7 +16,7 @@ WORKOUTS = {
 }
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Привет! Я Фулбоди Бот 💪 Напиши /тренировка, чтобы начать!")
+    await update.message.reply_text("Привет! Я Фулбоди Бот 💪 Напиши /workout, чтобы начать!")
 
 async def workout(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_keyboard = [["A", "B", "C"]]
@@ -96,21 +96,21 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 def main():
-    TOKEN = os.getenv("BOT_TOKEN")  # Токен из Render переменной окружения
+    TOKEN = os.getenv("BOT_TOKEN")
     app = ApplicationBuilder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("тренировка", workout)],
+        entry_points=[CommandHandler("workout", workout)],
         states={
             CHOOSING_DAY: [MessageHandler(filters.TEXT & ~filters.COMMAND, choose_day)],
             ENTER_SETS: [MessageHandler(filters.TEXT & ~filters.COMMAND, enter_sets)],
             ENTER_REPS: [MessageHandler(filters.TEXT & ~filters.COMMAND, enter_reps)],
         },
-        fallbacks=[CommandHandler("отмена", cancel)]
+        fallbacks=[CommandHandler("cancel", cancel)]
     )
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("прогресс", show_progress))
+    app.add_handler(CommandHandler("progress", show_progress))
     app.add_handler(conv_handler)
     app.run_polling()
 
